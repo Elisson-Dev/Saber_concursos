@@ -1,0 +1,22 @@
+[project]
+name = "saber-concursos"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "ELSS", email = "elissonfreelancer@gmail.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.156.2",
+    "httpx>=0.28.1",
+    "jinja2>=3.1.6",
+    "uvicorn>=0.54.0",
+]
+
+[project.scripts]
+saber-concursos = "saber_concursos:main"
+
+[build-system]
+requires = ["uv_build>=0.12.5,<0.13.0"]
+build-backend = "uv_build"

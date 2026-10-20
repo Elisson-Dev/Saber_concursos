@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saber Concursos — MCP Hub & Radar de Oportunidades</title>
+    <meta name="description" content="Plataforma de alta performance para busca e acompanhamento de concursos públicos e apostilas via PCI Concursos MCP.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+    <!-- Top Navigation / Header -->
+    <header class="app-header">
+        <div class="header-container">
+            <div class="brand">
+                <div class="brand-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-0.5-0.5"/>
+                        <circle cx="12" cy="11" r="3"/>
+                        <path d="m14.2 13.2 2.8 2.8"/>
+                    </svg>
+                </div>
+                <div class="brand-text">
+                    <h1>Saber Concursos</h1>
+                    <span class="brand-badge">PCI MCP HUB</span>
+                </div>
+            </div>
+
+            <!-- Global Status Bar -->
+            <div class="header-status">
+                <div id="mcp-status-pill" class="status-pill status-loading" title="Verificando conexão com PCI MCP">
+                    <span class="status-dot"></span>
+                    <span id="mcp-status-text">Conectando ao MCP...</span>
+                    <span id="mcp-latency" class="latency-badge">-- ms</span>
+                </div>
+                <button id="theme-toggle" class="btn-icon" title="Alternar tema" aria-label="Alternar tema">
+                    <svg class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1 12h2M21 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"/></svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <nav class="nav-tabs-wrapper">
+            <div class="nav-tabs" role="tablist">
+                <button class="nav-tab active" data-tab="explorar" role="tab" aria-selected="true">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m4.93 4.93 4.24 4.24M14.83 9.17l4.24-4.24M14.83 14.83l4.24 4.24M9.17 14.83l-4.24 4.24"/></svg>
+                    <span>Explorar Concursos</span>
+                </button>
+                <button class="nav-tab" data-tab="cargo" role="tab" aria-selected="false">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="14" x="2" y="7" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+                    <span>Por Cargo</span>
+                </button>
+                <button class="nav-tab" data-tab="cidade" role="tab" aria-selected="false">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                    <span>Por Cidade</span>
+                </button>
+                <button class="nav-tab" data-tab="apostilas" role="tab" aria-selected="false">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+                    <span>Apostilas & Materiais</span>
+                </button>
+                <button class="nav-tab" data-tab="favoritos" role="tab" aria-selected="false">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+                    <span>Meus Favoritos</span>
+                    <span id="fav-count-badge" class="tab-badge">0</span>
+                </button>
+                <button class="nav-tab" data-tab="radares" role="tab" aria-selected="false">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2Zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8Z"/><path d="M12 6v6l4 2"/></svg>
+                    <span>Radares & Histórico</span>
+                </button>
+                <button class="nav-tab" data-tab="mcp-info" role="tab" aria-selected="false">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m18 16 4-4-4-4"/><path d="m6 8-4 4 4 4"/><path d="m14.5 4-5 16"/></svg>
+                    <span>Painel MCP</span>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="main-container">
+        
+        <!-- ========================================== -->
+        <!-- ABA 1: EXPLORAR CONCURSOS (Geral + Região) -->
+        <!-- ========================================== -->
+        <section id="tab-explorar" class="tab-content active">
+            <div class="search-panel glass-card">
+                <div class="panel-header">
+                    <h2>Pesquisa Geral de Editais Abertos</h2>
+                    <p class="subtitle">Consulte em tempo real diretamente no conector oficial PCI Concursos MCP.</p>
+                </div>
+
+                <form id="form-pesquisa-geral" class="search-form">
+                    <div class="input-group-main">
+                        <div class="input-with-icon flex-grow">
+                            <svg class="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                            <input type="text" id="input-termo-geral" placeholder="Ex: INSS, Polícia Civil, Tribunal, Saúde, TI..." autocomplete="off">
+                        </div>
+                        <div class="select-wrapper">
+                            <select id="select-uf-geral" title="Filtrar por Estado (opcional)">
+                                <option value="">Todo o Brasil (ou informe UF)</option>
+                                <option value="ac">AC - Acre</option>
+                                <option value="al">AL - Alagoas</option>
+                                <option value="ap">AP - Amapá</option>
+                                <option value="am">AM - Amazonas</option>
+                                <option value="ba">BA - Bahia</option>
+                                <option value="ce">CE - Ceará</option>
+                                <option value="df">DF - Distrito Federal</option>
+                                <option value="es">ES - Espírito Santo</option>
+                                <option value="go">GO - Goiás</option>
+                                <option value="ma">MA - Maranhão</option>
+                                <option value="mt">MT - Mato Grosso</option>
+                                <option value="ms">MS - Mato Grosso do Sul</option>
+                                <option value="mg">MG - Minas Gerais</option>
+                                <option value="pa">PA - Pará</option>
+                                <option value="pb">PB - Paraíba</option>
+                                <option value="pr">PR - Paraná</option>
+                                <option value="pe">PE - Pernambuco</option>
+                                <option value="pi">PI - Piauí</option>
+                                <option value="rj">RJ - Rio de Janeiro</option>
+                                <option value="rn">RN - Rio Grande do Norte</option>
+                                <option value="rs">RS - Rio Grande do Sul</option>
+                                <option value="ro">RO - Rondônia</option>
+                                <option value="rr">RR - Roraima</option>
+                                <option value="sc">SC - Santa Catarina</option>
+                                <option value="sp">SP - São Paulo</option>
+                                <option value="se">SE - Sergipe</option>
+                                <option value="to">TO - Tocantins</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                            <span>Pesquisar</span>
+                        </button>
+                    </div>
+
+                    <!-- Macro Region Quick Filters & Options -->
+                    <div class="filters-row">
+                        <div class="region-chips" id="region-chips">
+                            <span class="filter-label">Região:</span>
+                            <button type="button" class="chip active" data-regiao="todas">Todas</button>
+                            <button type="button" class="chip" data-regiao="nacional">Nacional</button>
+                            <button type="button" class="chip" data-regiao="sudeste">Sudeste</button>
+                            <button type="button" class="chip" data-regiao="sul">Sul</button>
+                            <button type="button" class="chip" data-regiao="nordeste">Nordeste</button>
+                            <button type="button" class="chip" data-regiao="centro-oeste">Centro-Oeste</button>
+                            <button type="button" class="chip" data-regiao="norte">Norte</button>
+                        </div>
+
+                        <div class="checkbox-options">
+                            <label class="custom-checkbox">
+                                <input type="checkbox" id="check-professores">
+                                <span class="checkmark"></span>
+                                <span>Apenas Magistério / Professores</span>
+                            </label>
+                            <button type="button" id="btn-save-radar-geral" class="btn-ghost" title="Salvar esses parâmetros como Radar Permanente">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+                                <span>Salvar Radar</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Quick suggestion tags -->
+                    <div class="quick-tags">
+                        <span class="tag-title">Populares:</span>
+                        <button type="button" class="quick-tag" data-tag="Polícia Civil">Polícia Civil</button>
+                        <button type="button" class="quick-tag" data-tag="Tribunal de Justiça">Tribunais</button>
+                        <button type="button" class="quick-tag" data-tag="Prefeitura">Prefeituras</button>
+                        <button type="button" class="quick-tag" data-tag="Enfermagem">Saúde</button>
+                        <button type="button" class="quick-tag" data-tag="Tecnologia da Informação">TI</button>
+                        <button type="button" class="quick-tag" data-tag="Fiscal">Fisco / Auditor</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Results Section -->
+            <div id="results-explorar" class="results-container">
+                <div class="results-header">
+                    <div class="results-info">
+                        <h3 id="explorar-title">Concursos com Inscrições Abertas</h3>
+                        <span id="explorar-count" class="counter-badge">Carregando...</span>
+                    </div>
+                    <div class="results-actions">
+                        <button id="btn-refresh-explorar" class="btn-sm btn-ghost" title="Atualizar dados">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>
+                            <span>Atualizar</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="cards-explorar" class="cards-grid">
+                    <!-- Cards will be populated here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- ABA 2: BUSCA POR CARGO                     -->
+        <!-- ========================================== -->
+        <section id="tab-cargo" class="tab-content">
+            <div class="search-panel glass-card">
+                <div class="panel-header">
+                    <h2>Busca Especializada por Cargo</h2>
+                    <p class="subtitle">Filtra concursos abertos para sua profissão específica, com opção de restringir ao seu estado.</p>
+                </div>
+
+                <form id="form-pesquisa-cargo" class="search-form">
+                    <div class="input-group-main">
+                        <div class="input-with-icon flex-grow">
+                            <svg class="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="14" x="2" y="7" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+                            <input type="text" id="input-cargo" placeholder="Ex: Advogado, Enfermeiro, Analista de Sistemas, Engenheiro Civil..." required>
+                        </div>
+                        <div class="select-wrapper">
+                            <select id="select-uf-cargo" title="Filtrar por Estado (opcional)">
+                                <option value="">Todo o Brasil (ou escolha UF)</option>
+                                <option value="ac">AC</option><option value="al">AL</option><option value="ap">AP</option>
+                                <option value="am">AM</option><option value="ba">BA</option><option value="ce">CE</option>
+                                <option value="df">DF</option><option value="es">ES</option><option value="go">GO</option>
+                                <option value="ma">MA</option><option value="mt">MT</option><option value="ms">MS</option>
+                                <option value="mg">MG</option><option value="pa">PA</option><option value="pb">PB</option>
+                                <option value="pr">PR</option><option value="pe">PE</option><option value="pi">PI</option>
+                                <option value="rj">RJ</option><option value="rn">RN</option><option value="rs">RS</option>
+                                <option value="ro">RO</option><option value="rr">RR</option><option value="sc">SC</option>
+                                <option value="sp">SP</option><option value="se">SE</option><option value="to">TO</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                            <span>Buscar Cargo</span>
+                        </button>
+                    </div>
+
+                    <div class="quick-tags mt-2">
+                        <span class="tag-title">Carreiras:</span>
+                        <button type="button" class="quick-tag-cargo" data-cargo="Advogado">Advogado</button>
+                        <button type="button" class="quick-tag-cargo" data-cargo="Enfermeiro">Enfermeiro</button>
+                        <button type="button" class="quick-tag-cargo" data-cargo="Médico">Médico</button>
+                        <button type="button" class="quick-tag-cargo" data-cargo="Psicólogo">Psicólogo</button>
+                        <button type="button" class="quick-tag-cargo" data-cargo="Analista de TI">Analista de TI</button>
+                        <button type="button" class="quick-tag-cargo" data-cargo="Assistente Administrativo">Assist. Administrativo</button>
+                        <button type="button" class="quick-tag-cargo" data-cargo="Guarda Municipal">Guarda Municipal</button>
+                        <button type="button" class="quick-tag-cargo" data-cargo="Motorista">Motorista</button>
+                    </div>
+                </form>
+            </div>
+
+            <div id="results-cargo" class="results-container">
+                <div class="results-header">
+                    <div class="results-info">
+                        <h3 id="cargo-title">Resultados por Cargo</h3>
+                        <span id="cargo-count" class="counter-badge">0 encontrados</span>
+                    </div>
+                </div>
+                <div id="cards-cargo" class="cards-grid">
+                    <div class="empty-state">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect width="20" height="14" x="2" y="7" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+                        <p>Digite o cargo desejado acima ou escolha um dos atalhos de carreira.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- ABA 3: BUSCA POR CIDADE                    -->
+        <!-- ========================================== -->
+        <section id="tab-cidade" class="tab-content">
+            <div class="search-panel glass-card">
+                <div class="panel-header">
+                    <h2>Busca por Cidade e Município</h2>
+                    <p class="subtitle">Descubra concursos abertos no município de sua preferência com a busca local inteligente do MCP.</p>
+                </div>
+
+                <form id="form-pesquisa-cidade" class="search-form">
+                    <div class="input-group-main">
+                        <div class="select-wrapper select-uf-fixed">
+                            <select id="select-uf-cidade" required title="Selecione o Estado">
+                                <option value="" disabled selected>UF *</option>
+                                <option value="sp">SP</option><option value="rj">RJ</option><option value="mg">MG</option>
+                                <option value="pr">PR</option><option value="rs">RS</option><option value="sc">SC</option>
+                                <option value="ba">BA</option><option value="df">DF</option><option value="go">GO</option>
+                                <option value="pe">PE</option><option value="ce">CE</option><option value="pa">PA</option>
+                                <option value="es">ES</option><option value="pb">PB</option><option value="rn">RN</option>
+                                <option value="al">AL</option><option value="pi">PI</option><option value="mt">MT</option>
+                                <option value="ms">MS</option><option value="ma">MA</option><option value="am">AM</option>
+                                <option value="ro">RO</option><option value="se">SE</option><option value="to">TO</option>
+                                <option value="ac">AC</option><option value="ap">AP</option><option value="rr">RR</option>
+                            </select>
+                        </div>
+                        <div class="input-with-icon flex-grow">
+                            <svg class="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                            <input type="text" id="input-cidade" placeholder="Nome da cidade (ex: Florianópolis, Campinas, Belo Horizonte...)" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                            <span>Pesquisar Cidade</span>
+                        </button>
+                    </div>
+
+                    <div class="quick-tags mt-2">
+                        <span class="tag-title">Capitais & Polos:</span>
+                        <button type="button" class="quick-tag-cidade" data-cidade="São Paulo" data-uf="sp">São Paulo (SP)</button>
+                        <button type="button" class="quick-tag-cidade" data-cidade="Rio de Janeiro" data-uf="rj">Rio de Janeiro (RJ)</button>
+                        <button type="button" class="quick-tag-cidade" data-cidade="Belo Horizonte" data-uf="mg">Belo Horizonte (MG)</button>
+                        <button type="button" class="quick-tag-cidade" data-cidade="Curitiba" data-uf="pr">Curitiba (PR)</button>
+                        <button type="button" class="quick-tag-cidade" data-cidade="Porto Alegre" data-uf="rs">Porto Alegre (RS)</button>
+                        <button type="button" class="quick-tag-cidade" data-cidade="Salvador" data-uf="ba">Salvador (BA)</button>
+                        <button type="button" class="quick-tag-cidade" data-cidade="Brasília" data-uf="df">Brasília (DF)</button>
+                    </div>
+                </form>
+            </div>
+
+            <div id="results-cidade" class="results-container">
+                <div class="results-header">
+                    <div class="results-info">
+                        <h3 id="cidade-title">Resultados por Cidade</h3>
+                        <span id="cidade-count" class="counter-badge">0 encontrados</span>
+                    </div>
+                </div>
+                <div id="cards-cidade" class="cards-grid">
+                    <div class="empty-state">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                        <p>Selecione o estado (UF) e o nome do município para consultar editais municipais e estaduais.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- ABA 4: APOSTILAS & MATERIAIS               -->
+        <!-- ========================================== -->
+        <section id="tab-apostilas" class="tab-content">
+            <div class="search-panel glass-card">
+                <div class="panel-header">
+                    <h2>Apostilas Digitais & Materiais de Estudo (PDFs)</h2>
+                    <p class="subtitle">Consulte apostilas preparatórias completas com número de páginas, valores e checkout oficial.</p>
+                </div>
+
+                <form id="form-pesquisa-apostilas" class="search-form">
+                    <div class="input-group-main">
+                        <div class="input-with-icon flex-grow">
+                            <svg class="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+                            <input type="text" id="input-termo-apostila" placeholder="Ex: Polícia Civil, Guarda Municipal, Professor, INSS..." required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                            <span>Buscar Apostilas</span>
+                        </button>
+                    </div>
+
+                    <div class="quick-tags mt-2">
+                        <span class="tag-title">Materiais Procurados:</span>
+                        <button type="button" class="quick-tag-apostila" data-termo="Guarda Municipal">Guarda Municipal</button>
+                        <button type="button" class="quick-tag-apostila" data-termo="Polícia Militar">Polícia Militar</button>
+                        <button type="button" class="quick-tag-apostila" data-termo="Polícia Civil">Polícia Civil</button>
+                        <button type="button" class="quick-tag-apostila" data-termo="Professor">Professor de Educação</button>
+                        <button type="button" class="quick-tag-apostila" data-termo="Agente Administrativo">Agente Administrativo</button>
+                        <button type="button" class="quick-tag-apostila" data-termo="INSS">INSS</button>
+                    </div>
+                </form>
+            </div>
+
+            <div id="results-apostilas" class="results-container">
+                <div class="results-header">
+                    <div class="results-info">
+                        <h3 id="apostilas-title">Catálogo de Apostilas</h3>
+                        <span id="apostilas-count" class="counter-badge">0 materiais</span>
+                    </div>
+                </div>
+                <div id="cards-apostilas" class="apostilas-grid">
+                    <!-- Material cards populated here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- ABA 5: MEUS FAVORITOS & ACOMPANHAMENTO    -->
+        <!-- ========================================== -->
+        <section id="tab-favoritos" class="tab-content">
+            <div class="favoritos-header glass-card">
+                <div class="fav-title-wrap">
+                    <h2>Central de Acompanhamento & Favoritos</h2>
+                    <p class="subtitle">Gerencie status de inscrição, metas de estudo e anotações pessoais gravadas no SQLite local.</p>
+                </div>
+                <div class="fav-subtabs">
+                    <button class="fav-subtab active" data-fav-sub="concursos">Concursos Salvos</button>
+                    <button class="fav-subtab" data-fav-sub="apostilas">Apostilas Salvas</button>
+                </div>
+            </div>
+
+            <!-- Subseção Concursos Favoritos -->
+            <div id="fav-sub-concursos" class="fav-section active">
+                <div class="status-filter-bar">
+                    <span class="filter-label">Filtrar por Status:</span>
+                    <button class="chip-status active" data-status="todos">Todos</button>
+                    <button class="chip-status" data-status="Interessado">Interessado</button>
+                    <button class="chip-status" data-status="Inscrito">Inscrito</button>
+                    <button class="chip-status" data-status="Estudando">Estudando</button>
+                    <button class="chip-status" data-status="Prova Feita">Prova Feita</button>
+                </div>
+
+                <div id="cards-favoritos-concursos" class="cards-grid mt-3">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+
+            <!-- Subseção Apostilas Favoritas -->
+            <div id="fav-sub-apostilas" class="fav-section">
+                <div id="cards-favoritos-apostilas" class="apostilas-grid mt-3">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- ABA 6: RADARES & HISTÓRICO                -->
+        <!-- ========================================== -->
+        <section id="tab-radares" class="tab-content">
+            <div class="grid-two-columns">
+                <!-- Coluna 1: Radares Salvos -->
+                <div class="glass-card">
+                    <div class="panel-header-inline">
+                        <div>
+                            <h3>Meus Radares Fixos</h3>
+                            <p class="subtitle-sm">Filtros salvos para checagem com 1 clique.</p>
+                        </div>
+                    </div>
+                    <div id="lista-radares" class="list-wrapper">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+
+                <!-- Coluna 2: Histórico de Buscas -->
+                <div class="glass-card">
+                    <div class="panel-header-inline">
+                        <div>
+                            <h3>Histórico de Consultas</h3>
+                            <p class="subtitle-sm">Últimas pesquisas realizadas.</p>
+                        </div>
+                        <button id="btn-limpar-historico" class="btn-sm btn-danger-outline" title="Limpar histórico">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                            <span>Limpar</span>
+                        </button>
+                    </div>
+                    <div id="lista-historico" class="list-wrapper">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- ABA 7: PAINEL MCP & DIAGNÓSTICO           -->
+        <!-- ========================================== -->
+        <section id="tab-mcp-info" class="tab-content">
+            <div class="glass-card mb-4">
+                <div class="panel-header">
+                    <h2>Diagnóstico do Conector PCI Concursos MCP</h2>
+                    <p class="subtitle">Métricas de conexão, latência, versão de protocolo e ferramentas expostas.</p>
+                </div>
+
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <span class="metric-label">Status da Conexão</span>
+                        <div class="metric-value-row">
+                            <span id="metric-mcp-status" class="badge-success">Online</span>
+                        </div>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-label">Latência HTTP</span>
+                        <span id="metric-mcp-latency" class="metric-value font-mono">-- ms</span>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-label">Protocolo MCP</span>
+                        <span id="metric-mcp-protocol" class="metric-value font-mono">2025-06-18</span>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-label">Ferramentas Ativas</span>
+                        <span id="metric-mcp-tools-count" class="metric-value font-mono">5</span>
+                    </div>
+                </div>
+
+                <div class="mcp-details-box mt-3">
+                    <h4>Endpoint Oficial</h4>
+                    <div class="code-box">
+                        <code>https://mcp.pciconcursos.com.br/mcp</code>
+                        <button class="btn-sm btn-ghost" onclick="navigator.clipboard.writeText('https://mcp.pciconcursos.com.br/mcp'); showToast('URL copiada!', 'success');">Copiar</button>
+                    </div>
+                    <h4 class="mt-3">Instruções do Servidor</h4>
+                    <p id="mcp-instructions-text" class="quote-text">Carregando instruções...</p>
+                </div>
+
+                <div class="mt-3 d-flex gap-2">
+                    <button id="btn-retest-mcp" class="btn btn-secondary">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+                        <span>Testar Conexão Novamente</span>
+                    </button>
+                    <button id="btn-clean-cache" class="btn btn-ghost">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                        <span>Limpar Cache Expirado</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tools catalog -->
+            <div class="glass-card">
+                <h3>Catálogo de Ferramentas Expostas</h3>
+                <div id="mcp-tools-list" class="tools-grid mt-3">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Modal Detalhes do Concurso -->
+    <dialog id="modal-concurso" class="app-modal">
+        <div class="modal-content glass-card">
+            <div class="modal-header">
+                <div class="modal-title-group">
+                    <span id="modal-uf-badge" class="badge-uf">UF</span>
+                    <h3 id="modal-concurso-titulo">Título do Concurso</h3>
+                </div>
+                <button id="btn-close-modal" class="btn-icon" aria-label="Fechar">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <div class="modal-info-grid">
+                    <div class="info-item">
+                        <span class="info-label">Órgão / Entidade</span>
+                        <span id="modal-orgao" class="info-val">--</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Vagas e Remuneração</span>
+                        <span id="modal-vagas-salario" class="info-val highlight">--</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Escolaridade / Formação</span>
+                        <span id="modal-formacao" class="info-val">--</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Período de Inscrição</span>
+                        <span id="modal-datas" class="info-val">--</span>
+                    </div>
+                </div>
+
+                <div class="modal-cargos-section mt-3">
+                    <h4>Cargos Disponíveis neste Edital:</h4>
+                    <ul id="modal-cargos-list" class="cargos-full-list">
+                        <!-- Loaded dynamically -->
+                    </ul>
+                </div>
+
+                <!-- Anotações e Status do Favorito -->
+                <div class="modal-fav-controls mt-3">
+                    <h4>Acompanhamento Pessoal</h4>
+                    <div class="fav-controls-row">
+                        <div class="select-wrapper">
+                            <select id="modal-select-status">
+                                <option value="Interessado">Interessado</option>
+                                <option value="Inscrito">Inscrição Feita</option>
+                                <option value="Estudando">Estudando para a Prova</option>
+                                <option value="Prova Feita">Prova Realizada</option>
+                                <option value="Descartado">Descartado</option>
+                            </select>
+                        </div>
+                        <button id="modal-btn-toggle-fav" class="btn btn-secondary">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+                            <span id="modal-fav-btn-label">Favoritar Concurso</span>
+                        </button>
+                    </div>
+                    <textarea id="modal-notas" class="notes-textarea mt-2" placeholder="Adicione suas anotações pessoais, matérias prioritárias, links de editais ou lembretes..."></textarea>
+                    <div class="d-flex justify-end mt-1">
+                        <button id="modal-btn-salvar-notas" class="btn-sm btn-primary">Salvar Anotações</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <a id="modal-link-noticia" href="#" target="_blank" rel="noopener" class="btn btn-primary">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14 21 3"/></svg>
+                    <span>Abrir Notícia Oficial no PCI Concursos</span>
+                </a>
+                <a id="modal-link-apostila" href="#" target="_blank" rel="noopener" class="btn btn-secondary" style="display: none;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+                    <span>Comprar Apostila</span>
+                </a>
+            </div>
+        </div>
+    </dialog>
+
+    <!-- Modal Salvar Radar -->
+    <dialog id="modal-radar" class="app-modal">
+        <div class="modal-content glass-card modal-sm">
+            <div class="modal-header">
+                <h3>Salvar Novo Radar</h3>
+                <button id="btn-close-modal-radar" class="btn-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p class="subtitle-sm">Defina um nome para este filtro para reexecutá-lo instantaneamente quando quiser.</p>
+                <div class="mt-2">
+                    <label class="info-label" for="input-radar-nome">Nome do Radar:</label>
+                    <input type="text" id="input-radar-nome" class="form-control" placeholder="Ex: Advogado SP / Sudeste, TI Nacional..." required>
+                </div>
+                <div id="radar-preview-params" class="code-box mt-2 text-xs">
+                    <!-- Params preview -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="btn-confirmar-radar" class="btn btn-primary">Salvar Radar</button>
+            </div>
+        </div>
+    </dialog>
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- Scripts -->
+    <script src="/static/js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,19 @@
+services:
+  saber-concursos:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: saber_concursos_server
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data:/app/data
+    environment:
+      - HOST=0.0.0.0
+      - PORT=8000
+      - SABER_DB_PATH=/app/data/saber_concursos.db
+      - PCI_MCP_URL=https://mcp.pciconcursos.com.br/mcp
+      - CACHE_TTL_SECONDS=300
+      - MCP_TIMEOUT_SECONDS=25.0
+      - DEBUG=false
