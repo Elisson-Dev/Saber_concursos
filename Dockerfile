@@ -10,7 +10,7 @@ ENV PYTHONUNBUFFERED=1 \
     HOST=0.0.0.0 \
     PORT=8000 \
     SABER_DB_PATH=/app/data/saber_concursos.db \
-    UV_SYSTEM_PYTHON=1
+    PATH="/app/.venv/bin:$PATH"
 
 WORKDIR /app
 
@@ -23,15 +23,15 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Copia os manifestos de dependência do UV para aproveitar o cache de camadas do Docker
 COPY pyproject.toml uv.lock ./
 
-# Instalação das dependências com UV no Python do sistema
-RUN uv sync --frozen --no-cache
+# Instalação das dependências apenas (sem o projeto ainda, para aproveitar cache de camadas)
+RUN uv sync --frozen --no-install-project --no-cache
 
 # Copia o código-fonte da aplicação
 COPY src ./src
 COPY README.md LICENSE ./
 
-# Instala o próprio projeto no ambiente
-RUN uv pip install --no-cache -e .
+# Instala o próprio projeto no ambiente virtual
+RUN uv sync --frozen --no-cache
 
 # Cria diretório de persistência para o SQLite
 RUN mkdir -p /app/data
@@ -43,4 +43,5 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:8000/api/mcp/health || exit 1
 
 # Comando de inicialização
-CMD ["uv", "run", "saber-concursos"]
+CMD ["saber-concursos"]
+
