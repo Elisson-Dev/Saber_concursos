@@ -1,12 +1,13 @@
 # Multi-stage optimized Dockerfile para Saber Concursos
 FROM python:3.12-slim
 
-# Copia o binário oficial do UV para instalação ultra-rápida
+# Copia o binário oficial do UV
 COPY --from=ghcr.io/astral-sh/uv:0.12.5 /uv /uvx /bin/
 
 # Variáveis de ambiente de produção
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
+    UV_COMPILE_BYTECODE=1 \
     HOST=0.0.0.0 \
     PORT=8000 \
     SABER_DB_PATH=/app/data/saber_concursos.db \
@@ -14,27 +15,37 @@ ENV PYTHONUNBUFFERED=1 \
 
 WORKDIR /app
 
-# Utilitários de sistema essenciais
+# Utilitários de sistema essenciais e criação de usuário não-root
 RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     sqlite3 \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/* \
+    && groupadd -r appgroup && useradd -r -g appgroup -d /app appuser
 
-# Copia os manifestos de dependência do UV para aproveitar o cache de camadas do Docker
+# Cria diretório de persistência para o SQLite com permissão adequada
+RUN mkdir -p /app/data && chown -R appuser:appgroup /app/data
+
+# Copia os manifestos de dependência do UV para aproveitar o cache
 COPY pyproject.toml uv.lock ./
 
-# Instalação das dependências apenas (sem o projeto ainda, para aproveitar cache de camadas)
-RUN uv sync --frozen --no-install-project --no-cache
+# Instala dependências de terceiros com cache de build local
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv sync --frozen --no-install-project
 
-# Copia o código-fonte da aplicação
+# Copia o código-fonte da aplicação (LICENSE* evita quebra caso o arquivo não exista)
 COPY src ./src
-COPY README.md LICENSE ./
+COPY README.md LICENSE* ./
 
 # Instala o próprio projeto no ambiente virtual
-RUN uv sync --frozen --no-cache
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv sync --frozen
 
-# Cria diretório de persistência para o SQLite
-RUN mkdir -p /app/data
+# Garante a posse de /app para o usuário da aplicação
+RUN chown -R appuser:appgroup /app
+
+USER appuser
+
+VOLUME ["/app/data"]
 
 EXPOSE 8000
 
@@ -44,4 +55,3 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
 
 # Comando de inicialização
 CMD ["saber-concursos"]
-
